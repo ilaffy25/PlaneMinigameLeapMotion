@@ -1938,6 +1938,7 @@ MonoBehaviour:
   fuelLabel: {fileID: 1476836741}
   statusLabel: {fileID: 22948289}
   scoreLabel: {fileID: 934817411}
+  retryButton: {fileID: 0}
 --- !u!1 &2101509615
 GameObject:
   m_ObjectHideFlags: 0
