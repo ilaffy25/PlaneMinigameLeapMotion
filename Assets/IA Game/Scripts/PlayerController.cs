@@ -37,6 +37,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody rb;
     private GameManager gameManager;
+    public HandFlightInput handFlightInput;
 
     private void Awake()
     {
@@ -92,9 +93,9 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void ApplySteering()
     {
-        float roll = -Input.GetAxis("Horizontal");
-        float pitch = Input.GetAxis("Vertical");
-        float yaw = Input.GetAxis("Yaw"); // Custom axis configured in the Input Manager
+        float roll = -Input.GetAxis("Horizontal") + (handFlightInput ? handFlightInput.Roll : 0f);
+        float pitch = Input.GetAxis("Vertical") + (handFlightInput ? handFlightInput.Pitch : 0f);
+        float yaw = Input.GetAxis("Yaw") + (handFlightInput ? handFlightInput.Yaw : 0f); // Custom axis configured in the Input Manager
 
         Vector3 torque = new Vector3(pitch * pitchTorque, yaw * yawTorque, roll * rollTorque);
         rb.AddRelativeTorque(torque, ForceMode.Acceleration);
