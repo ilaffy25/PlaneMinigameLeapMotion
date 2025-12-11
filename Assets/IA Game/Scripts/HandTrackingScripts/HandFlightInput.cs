@@ -60,7 +60,7 @@ public class HandFlightInput : MonoBehaviour
 
         // 1) PITCH → basarnos en inclinación adelante/atrás
         // Palma abajo (neutro) ~ X ≈ -30°, así que normalizamos relativo a eso
-        float xRelative = x + 30f;
+        float xRelative = x + 15f;
 
         float pitchValue = Mathf.Clamp(xRelative / 40f, -1f, 1f);
         pitchValue = ApplyDeadzone(pitchValue, pitchDeadzone / 90f);
