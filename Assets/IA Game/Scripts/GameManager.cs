@@ -2,6 +2,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+public enum GameState
+{
+    Idle,
+    Playing,
+    GameOver
+}
+
 public class GameManager : MonoBehaviour
 {
     [Header("Fuel")]
@@ -20,41 +27,48 @@ public class GameManager : MonoBehaviour
     public Text scoreLabel;
 
     [Header("UI - Game Over")]
-    [Tooltip("Botón de reinicio que aparece cuando se acaba la gasolina.")]
     public GameObject retryButton;
 
     private float currentFuel;
-    private bool isPlaying;
     private float score;
     private Vector3 startPosition;
 
-    public bool IsPlaying => isPlaying;
+    public GameState CurrentState { get; private set; }
+
+    public bool IsPlaying => CurrentState == GameState.Playing;
 
     private void Start()
     {
         currentFuel = Mathf.Clamp(startingFuel, 0f, maxFuel);
         startPosition = playerTransform ? playerTransform.position : Vector3.zero;
+
         UpdateFuelUI();
         UpdateScoreUI();
-        SetStatusText("Fly through the fuel rings!", Color.white);
-        isPlaying = true;
 
-        // Asegurar que el botón esté oculto al inicio
         if (retryButton != null)
             retryButton.SetActive(false);
+
+        SetStatusText("Fly through the fuel rings!", Color.white);
+
+        SetState(GameState.Playing);
     }
 
     private void Update()
     {
-        if (!isPlaying)
+        switch (CurrentState)
         {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            }
-            return;
-        }
+            case GameState.Playing:
+                UpdatePlaying();
+                break;
 
+            case GameState.GameOver:
+                UpdateGameOver();
+                break;
+        }
+    }
+
+    private void UpdatePlaying()
+    {
         if (currentFuel <= 0f)
         {
             TriggerGameOver("Out of fuel!");
@@ -74,9 +88,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void UpdateGameOver()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ReloadScene();
+        }
+    }
+
     public void ConsumeFuel(float amount)
     {
-        if (!isPlaying) return;
+        if (CurrentState != GameState.Playing) return;
 
         currentFuel = Mathf.Max(0f, currentFuel - amount);
         UpdateFuelUI();
@@ -89,7 +111,7 @@ public class GameManager : MonoBehaviour
 
     public void AddFuel(float amount)
     {
-        if (!isPlaying) return;
+        if (CurrentState != GameState.Playing) return;
 
         currentFuel = Mathf.Clamp(currentFuel + amount, 0f, maxFuel);
         score += scorePerCheckpoint;
@@ -101,13 +123,45 @@ public class GameManager : MonoBehaviour
 
     public void TriggerGameOver(string reason)
     {
-        if (!isPlaying) return;
+        if (CurrentState == GameState.GameOver) return;
 
-        isPlaying = false;
+        SetState(GameState.GameOver);
+
         SetStatusText($"{reason}\nPress R to retry", Color.red);
 
         if (retryButton != null)
             retryButton.SetActive(true);
+    }
+
+    public void SetState(GameState newState)
+    {
+        CurrentState = newState;
+
+        switch (CurrentState)
+        {
+            case GameState.Playing:
+                OnEnterPlaying();
+                break;
+
+            case GameState.GameOver:
+                OnEnterGameOver();
+                break;
+        }
+    }
+
+    private void OnEnterPlaying()
+    {
+        // Aquí luego meteremos lógica de inicio, countdown, etc.
+    }
+
+    private void OnEnterGameOver()
+    {
+        // Aquí luego meteremos lógica de UI, animaciones, etc.
+    }
+
+    private void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void UpdateFuelUI()
