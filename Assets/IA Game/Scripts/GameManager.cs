@@ -1,16 +1,23 @@
+using Leap;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum GameState
 {
-    Idle,
+    Boot,
+    HandSelection,
+    Countdown,
     Playing,
+    Paused,
     GameOver
 }
 
+
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
     [Header("Fuel")]
     public float startingFuel = 30f;
     public float maxFuel = 60f;
@@ -33,9 +40,24 @@ public class GameManager : MonoBehaviour
     private float score;
     private Vector3 startPosition;
 
+
+    public Chirality SelectedHand { get; private set; }
+
     public GameState CurrentState { get; private set; }
 
     public bool IsPlaying => CurrentState == GameState.Playing;
+
+    // Countdown
+    private float countdownTimer = 3f;
+    private float currentCountdown;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
 
     private void Start()
     {
@@ -48,15 +70,21 @@ public class GameManager : MonoBehaviour
         if (retryButton != null)
             retryButton.SetActive(false);
 
-        SetStatusText("Fly through the fuel rings!", Color.white);
-
-        SetState(GameState.Playing);
+        SetState(GameState.HandSelection);
     }
 
     private void Update()
     {
         switch (CurrentState)
         {
+            case GameState.HandSelection:
+                UpdateHandSelection();
+                break;
+
+            case GameState.Countdown:
+                UpdateCountdown();
+                break;
+
             case GameState.Playing:
                 UpdatePlaying();
                 break;
@@ -65,6 +93,65 @@ public class GameManager : MonoBehaviour
                 UpdateGameOver();
                 break;
         }
+    }
+
+    // =======================
+    // STATE: HAND SELECTION
+    // =======================
+    private void OnEnterHandSelection()
+    {
+        SetStatusText("Select your hand", Color.white);
+
+        if (retryButton != null)
+            retryButton.SetActive(false);
+
+        if (HandSelectionManager.Instance != null)
+            HandSelectionManager.Instance.ResetSelection();
+    }
+
+    private void UpdateHandSelection()
+    {
+        // TEMP: tecla para simular selección
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            // Aquí luego conectamos el gesto
+            StartCountdown();
+        }
+    }
+    public void OnHandSelected(Chirality hand)
+    {
+        SelectedHand = hand;
+        Debug.Log("GameManager received hand: " + hand);
+        StartCountdown();
+    }
+
+
+    // =======================
+    // STATE: COUNTDOWN
+    // =======================
+    private void OnEnterCountdown()
+    {
+        currentCountdown = countdownTimer;
+    }
+
+    private void UpdateCountdown()
+    {
+        currentCountdown -= Time.deltaTime;
+
+        SetStatusText($"Starting in {Mathf.CeilToInt(currentCountdown)}", Color.yellow);
+
+        if (currentCountdown <= 0f)
+        {
+            SetState(GameState.Playing);
+        }
+    }
+
+    // =======================
+    // STATE: PLAYING
+    // =======================
+    private void OnEnterPlaying()
+    {
+        SetStatusText("Fly through the fuel rings!", Color.white);
     }
 
     private void UpdatePlaying()
@@ -88,6 +175,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // =======================
+    // STATE: GAME OVER
+    // =======================
+    private void OnEnterGameOver()
+    {
+        if (retryButton != null)
+            retryButton.SetActive(true);
+    }
+
     private void UpdateGameOver()
     {
         if (Input.GetKeyDown(KeyCode.R))
@@ -96,6 +192,41 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // =======================
+    // STATE MANAGEMENT
+    // =======================
+    public void SetState(GameState newState)
+    {
+        CurrentState = newState;
+
+        switch (CurrentState)
+        {
+            case GameState.HandSelection:
+                OnEnterHandSelection();
+                break;
+
+            case GameState.Countdown:
+                OnEnterCountdown();
+                break;
+
+            case GameState.Playing:
+                OnEnterPlaying();
+                break;
+
+            case GameState.GameOver:
+                OnEnterGameOver();
+                break;
+        }
+    }
+
+    public void StartCountdown()
+    {
+        SetState(GameState.Countdown);
+    }
+
+    // =======================
+    // GAMEPLAY
+    // =======================
     public void ConsumeFuel(float amount)
     {
         if (CurrentState != GameState.Playing) return;
@@ -125,40 +256,13 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState == GameState.GameOver) return;
 
-        SetState(GameState.GameOver);
-
         SetStatusText($"{reason}\nPress R to retry", Color.red);
-
-        if (retryButton != null)
-            retryButton.SetActive(true);
+        SetState(GameState.GameOver);
     }
 
-    public void SetState(GameState newState)
-    {
-        CurrentState = newState;
-
-        switch (CurrentState)
-        {
-            case GameState.Playing:
-                OnEnterPlaying();
-                break;
-
-            case GameState.GameOver:
-                OnEnterGameOver();
-                break;
-        }
-    }
-
-    private void OnEnterPlaying()
-    {
-        // Aquí luego meteremos lógica de inicio, countdown, etc.
-    }
-
-    private void OnEnterGameOver()
-    {
-        // Aquí luego meteremos lógica de UI, animaciones, etc.
-    }
-
+    // =======================
+    // UTILS
+    // =======================
     private void ReloadScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -190,4 +294,6 @@ public class GameManager : MonoBehaviour
             statusLabel.color = color;
         }
     }
+
+    
 }
