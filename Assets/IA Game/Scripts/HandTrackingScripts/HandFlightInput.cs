@@ -2,8 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using Leap;
 
-public class HandFlightInput : MonoBehaviour
+public class HandFlightInput : MonoBehaviour, IFlightInput
 {
+
     [Header("Sensitivity Settings")]
     [Range(0.1f, 5f)]
     public float pitchSensitivity = 1f;
@@ -26,55 +27,83 @@ public class HandFlightInput : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance == null)
+        {
+            ResetAxes();
+            return;
+        }
+
+        if (GameManager.Instance.CurrentState != GameState.Playing)
+        {
+            ResetAxes();
+            return;
+        }
+
+        if (HandSelectionManager.Instance == null || !HandSelectionManager.Instance.HasSelectedHand)
+        {
+            ResetAxes();
+            return;
+        }
+
         List<Hand> hands = HandsInfoManager.Instance.GetCurrentHands();
         if (hands == null || hands.Count == 0)
         {
-            Pitch = Roll = Yaw = 0;
+            ResetAxes();
             return;
         }
 
-        // Tomamos solo mano derecha por ahora
-        Hand rightHand = null;
+        Chirality targetHand = GameManager.Instance.SelectedHand;
+        Hand activeHand = null;
+
         foreach (var h in hands)
         {
-            if (h.IsRight) { rightHand = h; break; }
+            if (h.GetChirality() == targetHand)
+            {
+                activeHand = h;
+                break;
+            }
         }
 
-        if (rightHand == null)
+        if (activeHand == null)
         {
-            Pitch = Roll = Yaw = 0;
+            ResetAxes();
             return;
         }
 
-        ProcessRightHand(rightHand);
+        ProcessHand(activeHand);
     }
 
-    private void ProcessRightHand(Hand hand)
+    private void ProcessHand(Hand hand)
     {
         Quaternion rot = hand.Rotation;
         Vector3 euler = rot.eulerAngles;
 
-        float x = NormalizeAngle(euler.x);  // Pitch axis
-        float y = NormalizeAngle(euler.y);  // Yaw axis
-        float z = NormalizeAngle(euler.z);  // Roll axis
+        float x = NormalizeAngle(euler.x); // Pitch
+        float y = NormalizeAngle(euler.y); // Yaw
+        float z = NormalizeAngle(euler.z); // Roll
 
-        // 1) PITCH → basarnos en inclinación adelante/atrás
-        // Palma abajo (neutro) ~ X ≈ -30°, así que normalizamos relativo a eso
+        // PITCH
         float xRelative = x + 15f;
-
         float pitchValue = Mathf.Clamp(xRelative / 40f, -1f, 1f);
         pitchValue = ApplyDeadzone(pitchValue, pitchDeadzone / 90f);
         Pitch = pitchValue * pitchSensitivity;
 
-        // 2) ROLL → rotación como volante (Z)
+        // ROLL
         float rollValue = Mathf.Clamp(z / 45f, -1f, 1f);
         rollValue = ApplyDeadzone(rollValue, rollDeadzone / 90f);
         Roll = rollValue * rollSensitivity;
 
-        // 3) YAW → girar palma izquierda/derecha (Y)
+        // YAW
         float yawValue = Mathf.Clamp(y / 45f, -1f, 1f);
         yawValue = ApplyDeadzone(yawValue, yawDeadzone / 90f);
         Yaw = yawValue * yawSensitivity;
+    }
+
+    private void ResetAxes()
+    {
+        Pitch = 0f;
+        Roll = 0f;
+        Yaw = 0f;
     }
 
     private float ApplyDeadzone(float value, float dead)

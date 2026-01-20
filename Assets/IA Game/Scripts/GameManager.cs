@@ -217,6 +217,7 @@ public class GameManager : MonoBehaviour
                 OnEnterGameOver();
                 break;
         }
+        Debug.Log($"[GameManager] State change: {CurrentState} → {newState}");
     }
 
     public void StartCountdown()

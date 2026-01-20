@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Handles simple arcade style airplane controls using a Rigidbody.
@@ -35,6 +35,9 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Optional looping audio source used for the engine.")]
     public AudioSource engineAudio;
 
+    [Header("Input")]
+    public FlightInputRouter inputRouter; // 👈 NUEVO
+
     private Rigidbody rb;
     private GameManager gameManager;
     public HandFlightInput handFlightInput;
@@ -60,11 +63,17 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // Fuel drain is proportional to manoeuvres to reward smooth flying.
-        float manoeuvreIntensity = Mathf.Clamp01(Mathf.Abs(Input.GetAxis("Horizontal")) + Mathf.Abs(Input.GetAxis("Vertical")));
-        float drainAmount = (idleFuelDrain + manoeuvreIntensity * maneuverFuelMultiplier) * Time.deltaTime;
-        gameManager.ConsumeFuel(drainAmount);
+        float maneuverIntensity =
+            Mathf.Clamp01(
+                Mathf.Abs(inputRouter.Pitch) +
+                Mathf.Abs(inputRouter.Roll)
+            );
 
+        float drain =
+            (idleFuelDrain + maneuverIntensity * maneuverFuelMultiplier)
+            * Time.deltaTime;
+
+        gameManager.ConsumeFuel(drain);
         SetEngineAudio(true);
     }
 
@@ -93,11 +102,12 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void ApplySteering()
     {
-        float roll = -Input.GetAxis("Horizontal") + (handFlightInput ? handFlightInput.Roll : 0f);
-        float pitch = Input.GetAxis("Vertical") + (handFlightInput ? handFlightInput.Pitch : 0f);
-        float yaw = Input.GetAxis("Yaw") + (handFlightInput ? handFlightInput.Yaw : 0f); // Custom axis configured in the Input Manager
+        Vector3 torque = new Vector3(
+            inputRouter.Pitch * pitchTorque,
+            inputRouter.Yaw * yawTorque,
+            inputRouter.Roll * rollTorque
+        );
 
-        Vector3 torque = new Vector3(pitch * pitchTorque, yaw * yawTorque, roll * rollTorque);
         rb.AddRelativeTorque(torque, ForceMode.Acceleration);
     }
 
@@ -164,5 +174,15 @@ public class PlayerController : MonoBehaviour
         {
             engineAudio.pitch = 0.9f + rb.linearVelocity.magnitude / maxSpeed;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (!rb) return;
+
+        Gizmos.color = Color.red;
+        Vector3 worldCOM = rb.worldCenterOfMass;
+        Gizmos.DrawSphere(worldCOM, 0.15f);
     }
 }

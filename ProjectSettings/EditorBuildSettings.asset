@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/IA Game/Scenes/Funca.unity
+    path: Assets/IA Game/Scenes/GameScene.unity
     guid: a5822d571936eb94fa0d9b7ac13a0eda
   - enabled: 0
     path: Assets/IA Game/Scenes/SampleScene.unity
