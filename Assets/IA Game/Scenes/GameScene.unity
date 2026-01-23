@@ -3975,11 +3975,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pitchSensitivity: 0.5
-  rollSensitivity: 0.75
+  rollSensitivity: 0.5
   yawSensitivity: 0.75
-  pitchDeadzone: 20
-  rollDeadzone: 20
-  yawDeadzone: 15
+  pitchDeadzone: 30
+  rollDeadzone: 25
+  yawDeadzone: 20
 --- !u!114 &1221795109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4902,7 +4902,7 @@ Rigidbody:
   m_Mass: 5
   m_Drag: 0.2
   m_AngularDrag: 2
-  m_CenterOfMass: {x: 0, y: -3, z: 0}
+  m_CenterOfMass: {x: 0, y: -3.5, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:

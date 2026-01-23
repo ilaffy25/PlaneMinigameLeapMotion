@@ -83,7 +83,7 @@ public class HandFlightInput : MonoBehaviour, IFlightInput
         float z = NormalizeAngle(euler.z); // Roll
 
         // PITCH
-        float xRelative = x + 15f;
+        float xRelative = x + 10f;
         float pitchValue = Mathf.Clamp(xRelative / 40f, -1f, 1f);
         pitchValue = ApplyDeadzone(pitchValue, pitchDeadzone / 90f);
         Pitch = pitchValue * pitchSensitivity;
