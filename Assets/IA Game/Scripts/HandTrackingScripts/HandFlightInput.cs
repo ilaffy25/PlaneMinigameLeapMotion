@@ -94,7 +94,7 @@ public class HandFlightInput : MonoBehaviour, IFlightInput
         Roll = rollValue * rollSensitivity;
 
         // YAW
-        float yawValue = Mathf.Clamp(y / 45f, -1f, 1f);
+        float yawValue = Mathf.Clamp(y / 40f, -1f, 1f);
         yawValue = ApplyDeadzone(yawValue, yawDeadzone / 90f);
         Yaw = yawValue * yawSensitivity;
     }

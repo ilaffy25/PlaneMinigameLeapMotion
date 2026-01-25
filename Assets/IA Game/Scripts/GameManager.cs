@@ -18,6 +18,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    [Header("UI Panels")]
+    [SerializeField] private GameObject welcomePanel;
+    [SerializeField] private GameObject gameplayPanel;
+    [SerializeField] private GameObject gameOverPanel;
+
     [Header("Fuel")]
     public float startingFuel = 30f;
     public float maxFuel = 60f;
@@ -46,6 +51,17 @@ public class GameManager : MonoBehaviour
     public GameState CurrentState { get; private set; }
 
     public bool IsPlaying => CurrentState == GameState.Playing;
+
+    private void SetUIPanels(
+    bool showWelcome,
+    bool showGameplay,
+    bool showGameOver
+)
+    {
+        if (welcomePanel) welcomePanel.SetActive(showWelcome);
+        if (gameplayPanel) gameplayPanel.SetActive(showGameplay);
+        if (gameOverPanel) gameOverPanel.SetActive(showGameOver);
+    }
 
     // Countdown
     private float countdownTimer = 3f;
@@ -102,6 +118,11 @@ public class GameManager : MonoBehaviour
     {
         SetStatusText("Select your hand", Color.white);
 
+        SetUIPanels(
+        showWelcome: true,
+        showGameplay: false,
+        showGameOver: false
+    );
         if (retryButton != null)
             retryButton.SetActive(false);
 
@@ -132,6 +153,13 @@ public class GameManager : MonoBehaviour
     private void OnEnterCountdown()
     {
         currentCountdown = countdownTimer;
+
+        // Ocultamos el welcome cuando ya hay mano seleccionada
+        SetUIPanels(
+            showWelcome: false,
+            showGameplay: false,
+            showGameOver: false
+        );
     }
 
     private void UpdateCountdown()
@@ -152,6 +180,12 @@ public class GameManager : MonoBehaviour
     private void OnEnterPlaying()
     {
         SetStatusText("Fly through the fuel rings!", Color.white);
+
+        SetUIPanels(
+        showWelcome: false,
+        showGameplay: true,
+        showGameOver: false
+    );
     }
 
     private void UpdatePlaying()
@@ -180,6 +214,12 @@ public class GameManager : MonoBehaviour
     // =======================
     private void OnEnterGameOver()
     {
+        SetUIPanels(
+       showWelcome: false,
+       showGameplay: false,
+       showGameOver: true
+   );
+
         if (retryButton != null)
             retryButton.SetActive(true);
     }
@@ -257,7 +297,7 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState == GameState.GameOver) return;
 
-        SetStatusText($"{reason}\nPress R to retry", Color.red);
+        SetStatusText($"{reason}\nPress R to retry", Color.green);
         SetState(GameState.GameOver);
     }
 
