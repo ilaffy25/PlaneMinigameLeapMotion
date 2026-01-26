@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: c1c961cbd00909b45b34d97fd7df5cbf, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 611653af03e83184989f2fc54ea4bc2b, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -927,15 +927,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2008703924599250498, guid: 2ff8c8d06f9ed614c9f3b44837944535, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.075
+      value: 0.065
       objectReference: {fileID: 0}
     - target: {fileID: 2008703924599250498, guid: 2ff8c8d06f9ed614c9f3b44837944535, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.075
+      value: 0.065
       objectReference: {fileID: 0}
     - target: {fileID: 2008703924599250498, guid: 2ff8c8d06f9ed614c9f3b44837944535, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.075
+      value: 0.065
       objectReference: {fileID: 0}
     - target: {fileID: 2008703924599250498, guid: 2ff8c8d06f9ed614c9f3b44837944535, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1080,7 +1080,7 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 0
+  m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
@@ -1205,7 +1205,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 75
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1295,27 +1295,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 321127376}
-  followOffset: {x: 0, y: 10, z: -20}
+  followOffset: {x: 0, y: 10, z: -22}
   positionLerpSpeed: 4
   rotationLerpSpeed: 6
---- !u!1 &352840805 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1168483521806623234, guid: 07bb5d519945830499b9e378c22b1ebf, type: 3}
-  m_PrefabInstance: {fileID: 1794864747}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &352840806
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 352840805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f170c94eb2734fa98922f193f2412a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TargetType: {fileID: 11400000, guid: 2010fbdccee91d54a9073ea50876f5e3, type: 2}
 --- !u!1001 &358543332
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3591,7 +3573,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 632844119192134914, guid: 6aac9bcc9a120f5459b219aeb87af9cb, type: 3}
       propertyPath: size
-      value: 100
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 632844119192134914, guid: 6aac9bcc9a120f5459b219aeb87af9cb, type: 3}
       propertyPath: PointedTarget
@@ -4170,7 +4152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pitchSensitivity: 0.5
   rollSensitivity: 0.5
-  yawSensitivity: 0.75
+  yawSensitivity: 0.5
   pitchDeadzone: 30
   rollDeadzone: 25
   yawDeadzone: 20
@@ -6001,10 +5983,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1168483521806623234, guid: 07bb5d519945830499b9e378c22b1ebf, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 352840806}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 07bb5d519945830499b9e378c22b1ebf, type: 3}
 --- !u!1 &1795680758 stripped
 GameObject:
@@ -6171,6 +6150,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handType: 1
+--- !u!1 &1898272582 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4619170021386201459, guid: 6aac9bcc9a120f5459b219aeb87af9cb, type: 3}
+  m_PrefabInstance: {fileID: 1146522704}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1898767053
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6579,7 +6563,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   welcomePanel: {fileID: 2133509426}
-  gameplayPanel: {fileID: 0}
+  gameplayPanel: {fileID: 1898272582}
   gameOverPanel: {fileID: 0}
   startingFuel: 30
   maxFuel: 60
