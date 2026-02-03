@@ -84,17 +84,17 @@ public class HandFlightInput : MonoBehaviour, IFlightInput
 
         // PITCH
         float xRelative = x + 10f;
-        float pitchValue = Mathf.Clamp(xRelative / 40f, -1f, 1f);
+        float pitchValue = Mathf.Clamp(xRelative / 35f, -1f, 1f);
         pitchValue = ApplyDeadzone(pitchValue, pitchDeadzone / 90f);
         Pitch = pitchValue * pitchSensitivity;
 
         // ROLL
-        float rollValue = Mathf.Clamp(z / 45f, -1f, 1f);
+        float rollValue = Mathf.Clamp(z / 40f, -1f, 1f);
         rollValue = ApplyDeadzone(rollValue, rollDeadzone / 90f);
         Roll = rollValue * rollSensitivity;
 
         // YAW
-        float yawValue = Mathf.Clamp(y / 40f, -1f, 1f);
+        float yawValue = Mathf.Clamp(y / 35f, -1f, 1f);
         yawValue = ApplyDeadzone(yawValue, yawDeadzone / 90f);
         Yaw = yawValue * yawSensitivity;
     }

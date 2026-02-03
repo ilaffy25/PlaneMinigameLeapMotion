@@ -5,6 +5,8 @@ public class RetryButton : MonoBehaviour
 {
     public void Retry()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (GameManager.Instance != null)
+            GameManager.Instance.RequestRetry();
     }
+
 }

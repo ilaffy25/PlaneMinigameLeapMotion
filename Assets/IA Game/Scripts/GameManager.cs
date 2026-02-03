@@ -336,5 +336,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    
+    public void RequestRetry()
+    {
+        if (CurrentState != GameState.GameOver)
+            return;
+
+        ReloadScene();
+    }
+
+
 }
